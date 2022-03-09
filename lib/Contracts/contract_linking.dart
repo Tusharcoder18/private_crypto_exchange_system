@@ -10,7 +10,7 @@ class ContractLinking extends ChangeNotifier {
   final String _rpcUrl = "http://10.0.2.2:7545";
   final String _wsUrl = "ws://10.0.2.2:7545";
   final String _privateKey =
-      "54c8e7d92f96b85c99101ac9a59083afadfd41b922c6be2c730f7c5aff2147bb";
+      "599e88531cff96185162a838a1fb50fd063e78504945cd76957bfbe445f17604";
 
   Web3Client? _client;
   bool? isLoading = true;
@@ -29,7 +29,7 @@ class ContractLinking extends ChangeNotifier {
   int? _balance = 0;
   EthereumAddress? _address;
 
-  get getCurrentBalance => _balance;
+  int? get getCurrentBalance => _balance;
 
   ContractLinking() {
     initialSetup();
@@ -83,7 +83,8 @@ class ContractLinking extends ChangeNotifier {
     try {
       var currentBalance = await _client?.call(
           contract: _contract!, function: _getBalanceTPC!, params: [_address]);
-      _balance = currentBalance![0];
+      BigInt value = currentBalance![0];
+      _balance = value.toInt();
       isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -91,7 +92,7 @@ class ContractLinking extends ChangeNotifier {
     }
   }
 
-  buyTPC(int? amount) async {
+  buyTPC(BigInt? amount) async {
     // Call the buy_tuppercoins function in smart contract
     try {
       isLoading = true;
@@ -99,17 +100,20 @@ class ContractLinking extends ChangeNotifier {
       await _client?.sendTransaction(
           _credentials!,
           Transaction.callContract(
-              contract: _contract!,
-              function: _buyTPC!,
-              parameters: [_address, amount]));
+            contract: _contract!,
+            function: _buyTPC!,
+            parameters: [_address, amount],
+            // maxFeePerGas: EtherAmount.fromUnitAndValue(EtherUnit.ether, 100),
+          ));
       getBalance();
       debugPrint("Bought $amount TPCs");
     } catch (e) {
+      debugPrint("Didn't Bought $amount TPCs");
       debugPrint(e.toString());
     }
   }
 
-  sellTPC(int? amount) async {
+  sellTPC(BigInt? amount) async {
     // Call the sell_tuppercoins function in smart contract
     try {
       isLoading = true;

@@ -51,7 +51,7 @@ Widget balanceCard(BuildContext context) {
                   color: Colors.white,
                 ),
                 Consumer<ContractLinking>(builder: ((context, value, child) {
-                  int balance = 0;
+                  int? balance = 0;
                   if (value.isLoading == false) {
                     balance = value.getCurrentBalance;
                   }

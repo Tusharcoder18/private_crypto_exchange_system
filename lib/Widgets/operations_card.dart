@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hello_world_dapp/Contracts/contract_linking.dart';
 import 'package:provider/provider.dart';
+import 'package:web3dart/contracts.dart';
 
 class OperationsCard extends StatefulWidget {
   const OperationsCard({Key? key}) : super(key: key);
@@ -155,7 +156,7 @@ class DialogWidget extends StatefulWidget {
 class _DialogWidgetState extends State<DialogWidget> {
   double? amount = 0;
 
-  get getAmount => amount?.toInt();
+  BigInt get getAmount => BigInt.parse(amount!.toInt().toString());
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +191,8 @@ class _DialogWidgetState extends State<DialogWidget> {
       actions: [
         ElevatedButton(
           onPressed: () {
-            widget.onTap!(amount?.toInt());
+            BigInt _amount = getAmount;
+            widget.onTap!(_amount);
             Navigator.of(context).pop();
           },
           child: Text(
